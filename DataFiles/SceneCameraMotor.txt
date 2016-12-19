@@ -1,0 +1,13 @@
+# Data for positioning the camera and scene
+# XYZ axes: axisLength axisDiam originDiam
+0.040 0.001 0.00075
+# XYZ axes: xOrigin yOrigin zOrigin axisRotX axisRotY axisRotZ axisRotAngle 
+0.0 0.0 0.0 0.0 0.0 0.0 0.0
+# Scene: sceneRotX sceneRotY sceneRotZ
+-99.0 0.0 0.0
+# Scene: scenePosX scenePosY scenePosZ
+0.0 0.0 0.0
+# Camera: cameraPosX cameraPosY cameraPosZ
+0.1 0.1 0.1
+# Camera: cameraLookAtX cameraLookAtY cameraLookAtZ
+0 0 0
