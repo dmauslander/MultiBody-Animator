@@ -46,7 +46,7 @@ public class AnimationObject
         return colorWord;
     }
     
-    float sum = 0.0f;
+    idx3d_Matrix rot2 = null;
     
     public void UpdateObject(idx3d_Scene scene, float[] newPosition, float[] newOrientation, 
             float newRotation, int[] newColor)
@@ -57,29 +57,39 @@ public class AnimationObject
         {
             // Orient object's axis to the x-axis, then rotate about that axis,
             // then orient it back
-            //scene.object(name).setPos(zero);  // Translate to origin 
+            scene.object(name).setPos(zero);  // Translate to origin 
             idx3d_Vector newOrientV  = new idx3d_Vector(0.0f, 0.0f, 1.0f);
-            //idx3d_Vector currentOrientV  = orientation.getClone();
             idx3d_Matrix rot = idx3d_Vector.AlignToVector(orientation, newOrientV);
             //System.out.println(rot);
             scene.object(name).transform(rot); // Object is now oriented in base axis direction
             float rotateBy = -(newRotation - rotation);
-            sum += rotateBy;
-            if(rotateBy < -Math.PI)
+            if(rot2 == null)
             {
-                int np = (int)(-rotateBy / (2.0 * Math.PI));
-                //rotateBy += (np + 1) * 2.0 * Math.PI;
+                rot2 = idx3d_Matrix.rotateMatrix(0.0f, 0.0f, rotation);
             }
-            scene.object(name).rotate(0.0f, 0.0f, rotateBy);
-            //scene.object(name).rotate(0.0f, 0.0f, rotation);
-            //scene.object(name).rotate(0.0f, 0.0f, -newRotation);
-            //System.out.printf("%g %g %g %g\n", rotation, newRotation, rotateBy, sum);
+            else
+            {
+                TransposeInPlace(rot2);
+            }
+            // This scheme for rotation seems awkward but is necessary because
+            // the repeated incremental rotation using 'float' accumulates too 
+            // much error. This method uses the transpose to undo the previous
+            // rotation -- the transpose does not introduce any error as it just
+            // moves elements around (the inverse of a rotation matrix is equal
+            // to its transpose).
+            // This can be revisited after idx3d is converted from float to double.
+            scene.object(name).transform(rot2);
+            rot2 = idx3d_Matrix.rotateMatrix(0.0f, 0.0f, -newRotation);
+            scene.object(name).transform(rot2);
+            // The previous method -- errors accumulate too quickly because
+            // of the 'float' computations
+            //scene.object(name).rotate(0.0f, 0.0f, rotateBy);
             rotation = newRotation;
             // Now orient back to original orientation
             TransposeInPlace(rot);  // For inverse transformation
             scene.object(name).transform(rot); // Object is now oriented in its 
                 // original orientation 
-            //scene.object(name).setPos(position); // Translate back to original position
+            scene.object(name).setPos(position); // Translate back to original position
         }
         
         // Orientation

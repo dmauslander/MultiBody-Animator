@@ -332,7 +332,7 @@ public class MultiBodyRun extends Panel implements Runnable
 		while(true)
 		{
 			repaint();
-                        idx3d_Sleep(50);                        
+                        idx3d_Sleep(40);                        
 		}
 	}
 
